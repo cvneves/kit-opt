@@ -1,0 +1,1 @@
+O código em `min-spanning-tree` retorna uma árvore geradora mínima, dada uma matriz de pesos. É necessário modificá-lo para que gere uma 1-árvore geradora mínima.   
