@@ -209,7 +209,7 @@ void Data::read(){
 
 			// Preencher Matriz Distancia
 			for ( int j = 0; j < dimension; j++ ) {
-				for ( int i = j+1; i < dimension; j++ ) {
+				for ( int i = j+1; i < dimension; i++ ) {
 					inTSP >> distMatrix[i][j];
 					distMatrix[j][i] = distMatrix[i][j];
 				}
