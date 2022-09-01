@@ -1,30 +1,28 @@
-#include "readData.h"
-#include <fstream>
+#include "Data.h"
 #include <iostream>
 
 using namespace std;
 
-double ** matrizAdj; // matriz de adjacencia
-int dimension; // quantidade total de vertices
-
-void printData();
-
 int main(int argc, char** argv) {
 
-    readData(argc, argv, &dimension, &matrizAdj);
-    printData();
-    return 0;
+    auto data = Data(argc, argv[1]);
+    data.read();
+    size_t n = data.getDimension();
 
-    
+    cout << "Dimension: " << n << endl;
+    cout << "DistanceMatrix: " << endl;
+    data.printMatrixDist();
 
-}
 
-void printData() {
-  cout << "dimension: " << dimension << endl;
-  for (size_t i = 1; i <= dimension; i++) {
-    for (size_t j = 1; j <= dimension; j++) {
-      cout << matrizAdj[i][j] << " ";
+    cout << "Exemplo de Solucao s = ";
+    double cost = 0.0;
+    for (size_t i = 1; i < n; i++) {
+        cout << i << " -> ";
+        cost += data.getDistance(i, i+1);
     }
-    cout << endl;
-  }
+    cost += data.getDistance(n, 1);
+    cout << n << " -> " << 1 << endl;
+    cout << "Custo de S: " << cost << endl;
+
+    return 0;
 }
