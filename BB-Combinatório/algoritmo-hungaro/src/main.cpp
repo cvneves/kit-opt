@@ -15,10 +15,6 @@ int main(int argc, char** argv) {
 	for (int i = 0; i < n; i++){
 		cost[i] = new double[n];
 		for (int j = 0; j < n; j++){
-			if (i == j) { // Banindo arcos para o proprio nó
-				cost[i][j] = 99999999;
-				continue;
-			}
 			cost[i][j] = data.getDistance(i+1,j+1);
 		}
 	}

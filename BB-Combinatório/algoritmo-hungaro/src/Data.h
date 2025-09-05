@@ -1,7 +1,7 @@
 #ifndef DATA_H
 #define DATA_H
 
-#define INFINITE 0
+#define INFINITE 99999999
 
 #include <iostream>
 #include <string>
