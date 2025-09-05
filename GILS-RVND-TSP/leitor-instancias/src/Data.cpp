@@ -25,16 +25,6 @@ distMatrix(NULL){
 	explicitCoord = false;
 }
 
-Data::~Data(){
-	delete [] xCoord;
-	delete [] yCoord;
-
-	for ( int i = 0; i < dimension; i++){
-		delete [] distMatrix[i];
-	}
-	delete [] distMatrix;
-}
-
 void Data::read(){
 
 	ifstream inTSP(instaceName, ios::in);
@@ -61,11 +51,11 @@ void Data::read(){
 
 	inTSP >> typeProblem; //EDGE_WEIGHT_TYPE
 
-	xCoord = new double [ dimension ]; //coord x
-	yCoord = new double [ dimension ]; //coord y
+	xCoord = shared_ptr<double[]>(new double [ dimension ]); //coord x
+	yCoord = shared_ptr<double[]>(new double [ dimension ]); //coord y
 
 	// Alocar matriz 2D
-	distMatrix = new double *[ dimension ]; //memoria dinâmica (matrix 2D)
+	distMatrix = shared_ptr<double*[]>(new double *[ dimension ]); //memoria dinâmica (matrix 2D)
 
 	for ( int i = 0; i < dimension; i++ ) {
 		distMatrix[i] = new double [ dimension ];
@@ -278,7 +268,7 @@ void Data::read(){
 		// Calcular Matriz Distancia (Euclidiana)
 		for ( int i = 0; i < dimension; i++ ) {
 			for ( int j = 0; j < dimension; j++ ) {
-				distMatrix[i][j] = floor ( CalcDistEuc ( xCoord, yCoord, i, j ) + 0.5 );
+				distMatrix[i][j] = floor ( CalcDistEuc ( xCoord.get(), yCoord.get(), i, j ) + 0.5 );
 
 				if (i == j){
 					distMatrix[i][j] = INFINITE;
@@ -317,7 +307,7 @@ void Data::read(){
 		// Calcular Matriz Distancia (Euclidiana)
 		for ( int i = 0; i < dimension; i++ ) {
 			for ( int j = 0; j < dimension; j++ ) {
-				distMatrix[i][j] = ceil ( CalcDistEuc ( xCoord, yCoord, i, j ) );
+				distMatrix[i][j] = ceil ( CalcDistEuc ( xCoord.get(), yCoord.get(), i, j ) );
 
 				if (i == j){
 					distMatrix[i][j] = INFINITE;
@@ -342,7 +332,7 @@ void Data::read(){
 		double *latitude = new double [ dimension ];
 		double *longitude = new double [ dimension ];
 
-		CalcLatLong ( xCoord, yCoord, dimension, latitude, longitude );
+		CalcLatLong ( xCoord.get(), yCoord.get(), dimension, latitude, longitude );
 
 		// Calcular Matriz Distancia
 		for ( int i = 0; i < dimension; i++ ) {
@@ -382,7 +372,7 @@ void Data::read(){
 		// Calcular Matriz Distancia (Pesudo-Euclidiana)
 		for ( int i = 0; i < dimension; i++ ) {
 			for ( int j = 0; j < dimension; j++ ) {
-				distMatrix[i][j] = CalcDistAtt ( xCoord, yCoord, i, j );
+				distMatrix[i][j] = CalcDistAtt ( xCoord.get(), yCoord.get(), i, j );
 
 				if (i == j){
 					distMatrix[i][j] = INFINITE;

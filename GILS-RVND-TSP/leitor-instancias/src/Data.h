@@ -7,18 +7,18 @@
 #include <string>
 #include <fstream>
 #include <math.h>
+#include <memory>
 using namespace std;
 
 class Data{
 public:
 	Data( int, char * );
-	~Data();
 
 	void read();
 	void printMatrixDist();
 	inline int getDimension(){ return dimension; };
 	inline double getDistance(int i, int j){return distMatrix[i-1][j-1]; };
-	inline double **getMatrixCost(){return distMatrix; }
+	inline double **getMatrixCost(){return distMatrix.get(); }
 	inline double getXCoord(int i){return xCoord[i-1];}
 	inline double getYCoord(int i){return yCoord[i-1];}
 	inline bool getExplicitCoord(){return explicitCoord; };
@@ -31,8 +31,8 @@ private:
 
 	int dimension;
 
-	double **distMatrix;
-	double *xCoord, *yCoord;
+	shared_ptr<double*[]> distMatrix;
+	shared_ptr<double[]> xCoord, yCoord;
 
 	//Computing Distances
 	static double CalcDistEuc ( double *, double *, int , int );
