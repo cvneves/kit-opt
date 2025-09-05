@@ -1,4 +1,4 @@
-#include "data.h"
+#include "Data.h"
 
 
 //Inicializador
@@ -13,9 +13,9 @@ distMatrix(NULL){
 		exit( 1 );        
 	}
 
-	if ( qtParam > 2 )    {
+	if ( qtParam > 4 )    {
 		cout << "Too many parameters\n";
-		cout << " ./exeLaRP [Instance]"  << endl;
+		cout << " ./exeLaRP [Instance] [Upper Bound] [Search method]"  << endl;
 		exit( 1 );
 	}
 
@@ -25,17 +25,7 @@ distMatrix(NULL){
 	explicitCoord = false;
 }
 
-Data::~Data(){
-	delete [] xCoord;
-	delete [] yCoord;
-
-	for ( int i = 0; i < dimension; i++){
-		delete [] distMatrix[i];
-	}
-	delete [] distMatrix;
-}
-
-void Data::readData(){
+void Data::read(){
 
 	ifstream inTSP(instaceName, ios::in);
 
@@ -61,11 +51,11 @@ void Data::readData(){
 
 	inTSP >> typeProblem; //EDGE_WEIGHT_TYPE
 
-	xCoord = new double [ dimension ]; //coord x
-	yCoord = new double [ dimension ]; //coord y
+	xCoord = shared_ptr<double[]>(new double [ dimension ]); //coord x
+	yCoord = shared_ptr<double[]>(new double [ dimension ]); //coord y
 
 	// Alocar matriz 2D
-	distMatrix = new double *[ dimension ]; //memoria dinâmica (matrix 2D)
+	distMatrix = shared_ptr<double*[]>(new double *[ dimension ]); //memoria dinâmica (matrix 2D)
 
 	for ( int i = 0; i < dimension; i++ ) {
 		distMatrix[i] = new double [ dimension ];
@@ -209,7 +199,7 @@ void Data::readData(){
 
 			// Preencher Matriz Distancia
 			for ( int j = 0; j < dimension; j++ ) {
-				for ( int i = j+1; i < dimension; j++ ) {
+				for ( int i = j+1; i < dimension; i++ ) {
 					inTSP >> distMatrix[i][j];
 					distMatrix[j][i] = distMatrix[i][j];
 				}
@@ -278,7 +268,7 @@ void Data::readData(){
 		// Calcular Matriz Distancia (Euclidiana)
 		for ( int i = 0; i < dimension; i++ ) {
 			for ( int j = 0; j < dimension; j++ ) {
-				distMatrix[i][j] = floor ( CalcDistEuc ( xCoord, yCoord, i, j ) + 0.5 );
+				distMatrix[i][j] = floor ( CalcDistEuc ( xCoord.get(), yCoord.get(), i, j ) + 0.5 );
 
 				if (i == j){
 					distMatrix[i][j] = INFINITE;
@@ -317,7 +307,7 @@ void Data::readData(){
 		// Calcular Matriz Distancia (Euclidiana)
 		for ( int i = 0; i < dimension; i++ ) {
 			for ( int j = 0; j < dimension; j++ ) {
-				distMatrix[i][j] = ceil ( CalcDistEuc ( xCoord, yCoord, i, j ) );
+				distMatrix[i][j] = ceil ( CalcDistEuc ( xCoord.get(), yCoord.get(), i, j ) );
 
 				if (i == j){
 					distMatrix[i][j] = INFINITE;
@@ -342,7 +332,7 @@ void Data::readData(){
 		double *latitude = new double [ dimension ];
 		double *longitude = new double [ dimension ];
 
-		CalcLatLong ( xCoord, yCoord, dimension, latitude, longitude );
+		CalcLatLong ( xCoord.get(), yCoord.get(), dimension, latitude, longitude );
 
 		// Calcular Matriz Distancia
 		for ( int i = 0; i < dimension; i++ ) {
@@ -382,7 +372,7 @@ void Data::readData(){
 		// Calcular Matriz Distancia (Pesudo-Euclidiana)
 		for ( int i = 0; i < dimension; i++ ) {
 			for ( int j = 0; j < dimension; j++ ) {
-				distMatrix[i][j] = CalcDistAtt ( xCoord, yCoord, i, j );
+				distMatrix[i][j] = CalcDistAtt ( xCoord.get(), yCoord.get(), i, j );
 
 				if (i == j){
 					distMatrix[i][j] = INFINITE;
@@ -476,8 +466,8 @@ string Data::getInstanceName()
 }
 
 void Data::printMatrixDist(){
-	for (int i  = 0; i < getDimension(); i++){
-		for (int j = 0; j < getDimension(); j++){
+	for (int i  = 1; i <= getDimension(); i++){
+		for (int j = 1; j <= getDimension(); j++){
 			cout << getDistance(i,j) << " ";
 		}
 		cout << endl;
